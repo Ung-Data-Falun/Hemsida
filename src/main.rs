@@ -1,4 +1,5 @@
 mod endpoints;
+mod frontend;
 
 use actix_web::{middleware, App, HttpServer};
 
