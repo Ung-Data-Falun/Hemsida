@@ -2,6 +2,7 @@ mod endpoints;
 mod frontend;
 
 use actix_web::{middleware, App, HttpServer};
+use actix_files::Files;
 
 #[tokio::main]
 async fn main() -> std::io::Result<()> {
@@ -14,6 +15,7 @@ async fn main() -> std::io::Result<()> {
             .wrap(middleware::Compress::default())
             .wrap(middleware::Logger::default())
             .service(endpoints::protokoll)
+            .service(Files::new("/", "./assets/static").index_file("index.html"))
     })
     .bind(("127.0.0.1", 8080))?
     .run()
