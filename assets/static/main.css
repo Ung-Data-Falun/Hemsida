@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,100..700;1,100..700&display=swap');
+
 :root {
     --base: #1e1e2e;
     --mantle: #181825;
@@ -13,31 +15,37 @@ body {
 	padding: 5em;
 	margin: 0;
 	font-family: "Roboto Mono", monospace;
+	font-weight: 400;
 }
 
-h1 {
-	font-weight: 400;
+ul {
+	padding-left: 0;
+}
+
+li {
+	list-style-type: none;
 }
 
 .navbar {
 	background-color: var(--surface);
-	height: 4em;
+	height: 4rem;
 	width: 100%;
 	padding: 0;
+	margin: 0;
+	border: none;
 	position: fixed;
 	top: 0;
 	left: 0;
 	display: flex;
 	flex-direction: row;
 	justify-content: space-around;
+	border-bottom: var(--mantle) solid;
 }
 
 .navbar-item {
-	padding-top: 0.5em;
-	font-size: 1.5em;
-	list-style-type: none;
-	text-align: center;
-	width: 100%;
+	padding-top: 1rem;
+	font-size: 1.5rem;
+	text-align: left;
 }
 
 a {
@@ -50,4 +58,36 @@ a:hover {
 	text-decoration-color: var(--link);
 }
 
+.dropdown-item {
+	margin: 0;
+	padding: 0;
+	padding-top: 1rem;
+	top: 3rem;
+	text-align: left;
+	position: absolute;
+	display: none;
+}
 
+.dropdown {
+	flex-direction: column;
+	align-items: left;
+	justify-content: start;
+}
+
+.dropdown:hover .dropdown-item {
+	display: block;
+}
+
+.dropdown-item > li {
+	transition: background-color 150ms linear;
+	background-color: var(--surface);
+	padding-left: 2rem;
+	padding-right: 3rem;
+	padding-bottom: 1rem;
+	padding-top: 1rem;
+	border-bottom: var(--base) solid;
+}
+
+.dropdown-item > li:hover {
+	background-color: var(--mantle);
+}
