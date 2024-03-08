@@ -48,7 +48,11 @@ pub async fn protokoll_i_månad(år: u32, månad: u32) -> io::Result<Vec<(String
     Ok(filnamn)
 }
 
-pub fn ul_filer(path: &str, felmeddelande: &str, li_generator: impl Fn(&str, &str) -> String) -> impl Responder {
+pub fn ul_filer(
+    path: &str,
+    felmeddelande: &str,
+    li_generator: impl Fn(&str, &str) -> String,
+) -> impl Responder {
     let mut wip_html = "<ul class=\"lista\">\n".to_string();
     let read_dir_result = match fs::read_dir(&path) {
         Ok(v) => v,
