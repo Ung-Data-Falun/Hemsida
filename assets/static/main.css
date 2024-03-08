@@ -12,18 +12,14 @@
 body {
 	background-color: var(--base);
 	color: var(--text);
-	padding: 5em;
+	padding: 5rem;
 	margin: 0;
 	font-family: "Roboto Mono", monospace;
 	font-weight: 400;
 }
 
-ul {
-	padding-left: 0;
-}
-
-li {
-	list-style-type: none;
+ul, ol {
+	padding-left: 1rem;
 }
 
 .navbar {
@@ -46,6 +42,7 @@ li {
 	padding-top: 1rem;
 	font-size: 1.5rem;
 	text-align: left;
+	list-style-type: none;
 }
 
 a {
@@ -86,6 +83,7 @@ a:hover {
 	padding-bottom: 1rem;
 	padding-top: 1rem;
 	border-bottom: var(--base) solid;
+	list-style-type: none;
 }
 
 .dropdown-item > li:hover {
