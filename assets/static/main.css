@@ -47,7 +47,7 @@ ul, ol {
 
 a {
 	color: var(--link);
-	text-decoration: underline var(--surface) auto;
+	text-decoration: underline rgba(0, 0, 0, 0) auto;
 	transition: all 150ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
