@@ -22,7 +22,7 @@ async fn main() -> std::io::Result<()> {
             .service(endpoints::api_protokoll_i_månad)
             .service(Files::new("/", "./assets/static").index_file("index.html"))
     })
-    .bind(("127.0.0.1", 8080))?
+    .bind(("127.0.0.5", 3000))?
     .run()
     .await
 }
