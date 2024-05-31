@@ -7,7 +7,7 @@ pub fn ul_filer(
     li_generator: impl Fn(&str, &str) -> String,
 ) -> impl Responder {
     let mut wip_html = "<ul class=\"lista\">\n".to_string();
-    let read_dir_result = match fs::read_dir(&path) {
+    let mut read_dir_result = match fs::read_dir(&path) {
         Ok(v) => v,
         Err(_e) => {
             dbg!(_e);
@@ -16,7 +16,11 @@ pub fn ul_filer(
                 .content_type(ContentType::html())
                 .body(format!("<p>{felmeddelande}</p>"));
         }
-    };
+    }.collect::<Vec<_>>();
+    read_dir_result.sort_by_key(|x| match x {
+        Ok(v) => v.path().to_string_lossy().into_owned(),
+        Err(_e) => String::new(),
+    });
     for file in read_dir_result {
         let file = match file {
             Ok(v) => v,
