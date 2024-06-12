@@ -1,4 +1,5 @@
 use actix_web::{http::header::ContentType, HttpResponse, Responder};
+use serde::{Deserialize, Serialize};
 use std::fs;
 
 pub fn ul_filer(
@@ -16,7 +17,8 @@ pub fn ul_filer(
                 .content_type(ContentType::html())
                 .body(format!("<p>{felmeddelande}</p>"));
         }
-    }.collect::<Vec<_>>();
+    }
+    .collect::<Vec<_>>();
     read_dir_result.sort_by_key(|x| match x {
         Ok(v) => v.path().to_string_lossy().into_owned(),
         Err(_e) => String::new(),
@@ -73,4 +75,15 @@ pub fn mall(titel: &str, content: &str) -> impl Responder {
     HttpResponse::Ok()
         .content_type(ContentType::html())
         .body(html)
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
+pub struct Medlem {
+    pub namn: String,
+    pub mail: String,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
+pub struct MedlemsLista {
+    pub medlemmar: Vec<Medlem>,
 }

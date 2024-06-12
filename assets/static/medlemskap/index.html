@@ -8,6 +8,15 @@
         <ul class="navbar replace" href="/navbar.html"></ul>
         <script src="/load.js"></script> 
         <h1>Medlemskap</h1>
-        <p>För att bli medlem i Ung Data så kan du skriva ett mail med namn, födelsedatum och address till <a href="mailto:styrelse@ungdata.org">styrelse@ungdata.org</a>, och du bör få bekräftelse inom ett par dagar.</p>
+        <p>Att bli medlem i Ung Data är gratis! För att bli medlem skriv din info här så bör du få bekräftelse inom ett par dagar.</p>
+        <form action="/api/medlem/" method="post">
+            <label for="namn">Namn:</label>
+            <input type="text" id="namn" name="namn" />
+            <br>
+            <label for="mail">Mail:</label>
+            <input type="email" id="mail" name="mail" />
+            <br>
+            <button type="submit">Bli Medlem</button>
+        </form>
     </body>
 </html>

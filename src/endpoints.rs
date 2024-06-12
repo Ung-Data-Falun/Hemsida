@@ -1,4 +1,11 @@
-use actix_web::{get, web::Path, Responder};
+use actix_web::{
+    get,
+    http::StatusCode,
+    post,
+    web::{self, Path, Redirect},
+    Responder, Result,
+};
+use ung_data_backend::{Medlem, MedlemsLista};
 
 #[get("/api/protokoll/{år}/{månad}/")]
 pub async fn api_protokoll_i_månad(argument: Path<(String, String)>) -> impl Responder {
@@ -39,6 +46,24 @@ pub async fn api_protokoll() -> impl Responder {
             format!("<li><a href=\"{link}\">{filename}</a></li>")
         },
     )
+}
+
+#[post("/api/medlem/")]
+pub async fn medlem(medlem: web::Form<Medlem>) -> Result<impl Responder> {
+    println!("test");
+    let mut current_members: MedlemsLista = toml::from_str(
+        &tokio::fs::read_to_string("medlemmar.toml")
+            .await
+            .unwrap_or("medlemmar = []".into()),
+    )
+    .unwrap();
+    current_members.medlemmar.push(medlem.0);
+    tokio::fs::write(
+        "medlemmar.toml",
+        toml::to_string_pretty(&current_members).unwrap(),
+    )
+    .await?;
+    Ok(Redirect::to("/medlem").using_status_code(StatusCode::SEE_OTHER))
 }
 
 #[get("/protokoll/{år}/{månad}/")]
