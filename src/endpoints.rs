@@ -27,7 +27,11 @@ pub async fn api_protokoll_lista() -> impl Responder {
         "assets/static/markdown/protokoll/",
         "Inga protokoll :/",
         |filename: &str, _path: &str| -> String {
-            format!(r#"<li><a href="{filename}">{filename}</a></li>"#)
+            if filename.ends_with(".md") {
+                return format!(r#"<li><a href="{filename}">{filename}</a></li>"#)
+            } else {
+                return format!(r#"<li><a href="/markdown/protokoll/{filename}">{filename}</a></li>"#)
+            }
         },
     )
 }
