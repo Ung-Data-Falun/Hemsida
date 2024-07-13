@@ -1,52 +1,7 @@
 use actix_web::{
-    get,
-    http::StatusCode,
-    post,
-    web::{self, Path, Redirect},
-    Responder, Result,
+    get, http::StatusCode, post, web, HttpResponse, Responder, Result
 };
-use ung_data_backend::{Medlem, MedlemsLista};
-
-#[get("/api/protokoll/{år}/{månad}/")]
-pub async fn api_protokoll_i_månad(argument: Path<(String, String)>) -> impl Responder {
-    let path = format!("assets/static/protokoll_raw/{}/{}", argument.0, argument.1);
-    ung_data_backend::ul_filer(
-        &path,
-        "Inga protokoll denna tidsperiod :/",
-        |filename: &str, _path: &str| -> String {
-            let datum = filename.split(".").next().unwrap_or("");
-            let link = datum.replace('-', "/");
-            let link = format!("/protokoll/{link}");
-            format!("<li><a href=\"{link}\">{datum}</a></li>")
-        },
-    )
-}
-
-#[get("/api/protokoll/{år}/")]
-pub async fn api_protokoll_i_år(argument: Path<String>) -> impl Responder {
-    let path = format!("assets/static/protokoll_raw/{argument}");
-    ung_data_backend::ul_filer(
-        &path,
-        "Inga protokoll denna tidsperiod :/",
-        move |filename: &str, _path: &str| -> String {
-            let link = format!("{filename}/");
-            format!("<li><a href=\"{link}\">{filename}</a></li>")
-        },
-    )
-}
-
-#[get("/api/protokoll/")]
-pub async fn api_protokoll() -> impl Responder {
-    let path = format!("assets/static/protokoll_raw");
-    ung_data_backend::ul_filer(
-        &path,
-        "Inga protokoll :/",
-        move |filename: &str, _path: &str| -> String {
-            let link = format!("{filename}/");
-            format!("<li><a href=\"{link}\">{filename}</a></li>")
-        },
-    )
-}
+use ung_data_backend::{mall, ul_filer, Medlem, MedlemsLista};
 
 #[post("/api/medlem/")]
 pub async fn medlem(medlem: web::Form<Medlem>) -> Result<impl Responder> {
@@ -63,35 +18,44 @@ pub async fn medlem(medlem: web::Form<Medlem>) -> Result<impl Responder> {
         toml::to_string_pretty(&current_members).unwrap(),
     )
     .await?;
-    Ok(Redirect::to("/medlem").using_status_code(StatusCode::SEE_OTHER))
+    Ok(web::Redirect::to("/medlem").using_status_code(StatusCode::SEE_OTHER))
 }
 
-#[get("/protokoll/{år}/{månad}/")]
-pub async fn protokoll_i_månad(argument: Path<(String, String)>) -> impl Responder {
-    ung_data_backend::mall(
-        &format!("Protokoll {} {}", argument.0, argument.1),
-        &format!(
-            "<div class=\"replace\" href=\"/api/protokoll/{}/{}/\"></div>",
-            argument.0, argument.1
-        ),
+#[get("/api/protokoll/")]
+pub async fn api_protokoll_lista() -> impl Responder {
+    ul_filer(
+        "assets/static/markdown/protokoll/",
+        "Inga protokoll :/",
+        |filename: &str, _path: &str| -> String {
+            format!(r#"<li><a href="{filename}">{filename}</a></li>"#)
+        },
     )
 }
 
-#[get("/protokoll/{år}/")]
-pub async fn protokoll_i_år(argument: Path<String>) -> impl Responder {
-    ung_data_backend::mall(
-        &format!("Protokoll {argument}"),
-        &format!("<div class=\"replace\" href=\"/api/protokoll/{argument}/\"></div>",),
-    )
+#[get("/api/protokoll/{file}")]
+pub async fn api_protokoll(file: web::Path<String>) -> impl Responder {
+    let contents = match std::fs::read_to_string(format!("assets/static/markdown/protokoll/{file}")) {
+        Ok(v) => v,
+        Err(_e) => { dbg!(_e); return HttpResponse::NotFound().body(":(")},
+    };
+
+    let contents = markdown::to_html(&contents);
+
+    HttpResponse::Ok().body(contents)
 }
 
-#[get("/protokoll/{år}/{månad}/{dag}")]
-pub async fn protokoll(argument: Path<(String, String, String)>) -> impl Responder {
-    ung_data_backend::mall(
-        &format!("Protokoll {} {} {}", argument.0, argument.1, argument.2),
+#[get("/protokoll/")]
+pub async fn protokoll_lista() -> impl Responder {
+    mall("Protokoll", r#"<div class="replace" href="/api/protokoll/"></div>"#)
+}
+
+
+#[get("/protokoll/{file}")]
+pub async fn protokoll(argument: web::Path<String>) -> impl Responder {
+    mall(
+        &argument,
         &format!(
-            "<div class=\"replace\" href=\"/protokoll_raw/{}/{}/{}-{}-{}.html\"></div>",
-            argument.0, argument.1, argument.0, argument.1, argument.2
+            r#"<div class="replace" href="/api/protokoll/{argument}"></div>"#,
         ),
     )
 }
